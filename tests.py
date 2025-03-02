@@ -31,20 +31,14 @@ class TestBooksCollector:
         collector = BooksCollector()
         collector.add_new_book(book_name)
         collector.set_book_genre(book_name, "Фантастика")
-        collector.get_book_genre(book_name)
-        assert "Фантастика" == collector.get_book_genre(book_name)
+        assert "Фантастика" == collector.books_genre[book_name]
 
     def test_get_book_genre_return_correct(self):
-        book_name_1 = 'Букварь'
-        collector_1 = BooksCollector()
-        collector_1.add_new_book(book_name_1)
-        collector_1.set_book_genre(book_name_1, "Фантастика")
-
-        book_name_2 = 'Азбука'
-        collector_2 = BooksCollector()
-        collector_2.add_new_book(book_name_2)
-        collector_2.set_book_genre(book_name_2, "Ужасы")
-        assert "Ужасы" == collector_2.get_book_genre(book_name_2)
+        book_name = 'Азбука'
+        collector = BooksCollector()
+        collector.add_new_book(book_name)
+        collector.set_book_genre(book_name, "Ужасы")
+        assert "Ужасы" == collector.get_book_genre(book_name)
 
     def test_get_books_with_specific_genre_books_return_genres(self):
         book_name_3 = 'Словарь'
@@ -53,20 +47,21 @@ class TestBooksCollector:
         collector_3.set_book_genre(book_name_3, "Ужасы")
         assert book_name_3 in collector_3.get_books_with_specific_genre("Ужасы")
 
-    @pytest.mark.parametrize('book_name, genre', [
-        ['Код в сапогах', 'Комедии'],
-        ['Винни Пуз', 'Мультфильмы']
-    ])
-    def test_get_books_for_children_attribute_book_name_added(self, book_name, genre):
-        collector = BooksCollector()
-        collector.add_new_book(book_name)
-        collector.set_book_genre(book_name, genre)
-        assert book_name in collector.get_books_for_children()
+    def test_get_books_for_children_attribute_book_name_added(self):
+        collector_adult = BooksCollector()
+        collector_adult.add_new_book('Код в сапогах')
+        collector_adult.set_book_genre('Код в сапогах', 'Детективы')
+
+        collector_child = BooksCollector()
+        collector_child.add_new_book('Винни Пуз')
+        collector_child.set_book_genre('Винни Пуз', 'Мультфильмы')
+
+        assert ('Винни Пуз' in collector_child.get_books_for_children() and
+                'Код в сапогах' not in collector_adult.get_books_for_children())
 
     def test_add_book_in_favorites_book_once(self):
         collector = BooksCollector()
         collector.add_new_book("Синяя борода")
-        collector.set_book_genre("Синяя борода", 'Ужасы')
         collector.add_book_in_favorites("Синяя борода")
         assert len(collector.get_list_of_favorites_books()) == 1
 
